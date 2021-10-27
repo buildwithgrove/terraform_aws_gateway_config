@@ -2,10 +2,6 @@ variable "aws_access_key_id" {}
 
 variable "aws_secret_access_key" {}
 
-# variable "gateway_key_pair_name_id" {
-#   description = "ECS key pair name"
-# }
-
 variable "region" {}
 
 variable "environment" {
