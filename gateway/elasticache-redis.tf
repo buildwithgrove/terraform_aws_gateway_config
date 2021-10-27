@@ -13,7 +13,7 @@ resource "aws_elasticache_replication_group" "redis" {
   engine_version                = "6.x"
   port                          = 6379
   parameter_group_name          = "default.redis6.x"
-  node_type                     = "cache.t3.medium"
+  node_type                     = "cache.r6g.xlarge"
   multi_az_enabled              = true 
   automatic_failover_enabled    = true
   availability_zones            = ["${var.region}a", "${var.region}b", "${var.region}c"]
