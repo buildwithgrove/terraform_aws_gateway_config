@@ -65,18 +65,24 @@ module "asg" {
     vpc_zone_identifier     = local.subnets
 }
 
+resource "aws_ecs_capacity_provider" "gateway_asg" {
+  name = "${local.name}-${local.environment}"
 
+  auto_scaling_group_provider {
+    auto_scaling_group_arn = module.asg.autoscaling_group_arn
+  }
+}
 
 module "ecs" {
-    source = "../../../../modules/services/app"
+    source = "../../../gateway_modules/app"
 
     name        = local.name
     environment = local.environment
     
     # ---------- ecs cluster ----------
-    capacity_providers = ["FARGATE", "FARGATE_SPOT"]
+    capacity_providers = [aws_ecs_capacity_provider.gateway_asg.name]
     default_capacity_provider_strategy = [{
-        capacity_provider = "FARGATE"
+        capacity_provider = aws_ecs_capacity_provider.gateway_asg.name
         weight            = "1"
         base              = "1" }]
     
