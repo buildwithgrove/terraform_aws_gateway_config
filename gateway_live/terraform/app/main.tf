@@ -46,12 +46,23 @@ data "aws_iam_role" "ecs_task_execution_role" {
   name = "ecsTaskExecutionRole"
 }
 
-module "log_group" {
-  source = "../../../../modules/services/cloudwatch"
+data "aws_launch_template" "gateway_template" {
+  name = "${local.name}-${local.environment}"
+}
 
-  create_log_group = true
-  name             = local.name
-  environment      = local.environment
+module "asg" {
+    source = "../../../gateway_modules/autoscalling/"
+
+    name        = local.name
+    environment = local.environment
+
+    min_size                = 1
+    max_size                = 50
+    # desired_capacity        = 10
+    target_group_arns       = [data.aws_lb_target_group.gateway_tg.arn]
+    launch_template         = data.aws_launch_template.gateway_template.name
+    launch_template_version = data.aws_launch_template.gateway_template.latest_version
+    vpc_zone_identifier     = local.subnets
 }
 
 
@@ -70,10 +81,7 @@ module "ecs" {
         base              = "1" }]
     
     kms_key_id         = null
-    logging            = "OVERRIDE"
-
-    cloudwatch_log_group_name     = module.log_group.cloudwatch_log_group_name
-    cloudwatch_encryption_enabled = false
+    logging            = "NONE"
 
     setting_name       = "containerInsights"
     container_insights = true    
