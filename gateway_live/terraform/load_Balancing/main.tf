@@ -42,54 +42,54 @@ data "aws_acm_certificate" "ssl_certificate" {
 }
 
 module "alb" {
-    source = "../../../../modules/services/load_balancing"
+  source = "../../../gateway_modules/load_balancing/"
     
-    name                       = local.name
-    environment                = local.environment 
+  name                       = local.name
+  environment                = local.environment 
 
-    vpc_id                     = data.aws_vpc.gateway_vpc.id
+  vpc_id                     = data.aws_vpc.gateway_vpc.id
 
-    load_balancer_type         = "application"
-    internal                   = false
-    security_groups            = [data.aws_security_group.alb_sg.id] 
-    subnets                    = [ local.subnets[0], local.subnets[1]]
-    enable_http2               = true
-    ip_address_type            = "ipv4"
-    drop_invalid_header_fields = true
+  load_balancer_type         = "application"
+  internal                   = false
+  security_groups            = [data.aws_security_group.alb_sg.id] 
+  subnets                    = [ local.subnets[0], local.subnets[1]]
+  enable_http2               = true
+  ip_address_type            = "ipv4"
+  drop_invalid_header_fields = true
 
-    target_groups = [
-        {
-          name                 = format("%s-%s", local.name, local.environment)
-          port                 = 3000
-          protocol             = "HTTP"
-          protocol_version     = "HTTP1"
-          target_type          = "ip"
-          deregistration_delay           = 300
-          load_balancing_algorithm_type  = "round_robin"
-
-          health_check = {
-            enabled             = true
-            interval            = 30
-            path                = "/"
-            port                = "traffic-port"
-            healthy_threshold   = 5
-            unhealthy_threshold = 2
-            timeout             = 5
-            protocol            = "HTTP"
-            matcher             = "200"
-          }
-        }
-      ]
-
-    https_listeners = [
-      # Forward action is default, either when defined or undefined 
+  target_groups = [
       {
-        port               = 443
-        protocol           = "HTTPS"
-        certificate_arn    = data.aws_acm_certificate.ssl_certificate.arn
-        ssl_policy         = "ELBSecurityPolicy-2016-08"
-        action_type        = "forward"
-        target_group_index = 0
+        name                 = format("%s-%s", local.name, local.environment)
+        port                 = 3000
+        protocol             = "HTTP"
+        protocol_version     = "HTTP1"
+        target_type          = "instance"
+        deregistration_delay           = 120
+        load_balancing_algorithm_type  = "least_outstanding_requests"
+
+        health_check = {
+          enabled             = true
+          interval            = 30
+          path                = "/"
+          port                = "traffic-port"
+          healthy_threshold   = 5
+          unhealthy_threshold = 2
+          timeout             = 5
+          protocol            = "HTTP"
+          matcher             = "200"
+        }
       }
     ]
+
+  https_listeners = [
+    # Forward action is default, either when defined or undefined 
+    {
+      port               = 443
+      protocol           = "HTTPS"
+      certificate_arn    = data.aws_acm_certificate.ssl_certificate.arn
+      ssl_policy         = "ELBSecurityPolicy-2016-08"
+      action_type        = "forward"
+      target_group_index = 0
+    }
+  ]
 }
