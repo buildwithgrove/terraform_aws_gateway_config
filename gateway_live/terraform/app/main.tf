@@ -95,15 +95,12 @@ module "ecs" {
     # ---------- ecs task definition ----------
     task_role_arn            = "${data.aws_iam_role.ecs_task_execution_role.arn}"
     execution_role_arn       = "${data.aws_iam_role.ecs_task_execution_role.arn}"
-    cpu                      = 1024
-    memory                   = 4096
-    network_mode             = "awsvpc"
-    requires_compatibilities = ["FARGATE"]
+    network_mode             = "host"
+    requires_compatibilities = ["EC2"]
 
     # ---------- ecs service  ----------
-    launch_type 						            = "FARGATE"
-    desired_count   					          = 3
-    platform_version 					          = "LATEST"
+    launch_type 						            = "EC2"
+    desired_count   					          = 1
     scheduling_strategy 			        	= "REPLICA"
     deployment_minimum_healthy_percent 	= 100
     deployment_maximum_percent			    = 200	
