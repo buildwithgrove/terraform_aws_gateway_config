@@ -66,12 +66,7 @@ resource "aws_iam_instance_profile" "gateway" {
 
 
 module "launch_template" {
-  # source = "/home/takwa/Desktop/Workspace/Terraform_IaC/gateway_modules/launch-template"
   source = "../../../gateway_modules/launch-template/"
-
-  
-  # source  = "terraform-aws-modules/autoscaling/aws"
-  # version = "1.0.4"
   
   name        = local.name
   environment = local.environment
@@ -86,7 +81,7 @@ module "launch_template" {
   ebs_optimized = true
 
   instance_initiated_shutdown_behavior = "stop"
-  vpc_security_group_ids    = [data.aws_security_group.ecs_sg.id]
+  # vpc_security_group_ids    = [data.aws_security_group.ecs_sg.id]
   iam_instance_profile_name = aws_iam_instance_profile.gateway.name
   #  iam_instance_profile_arn = aws_iam_instance_profile.gateway.arn
 
@@ -101,7 +96,7 @@ module "launch_template" {
       ebs = {
         delete_on_termination = true
         encrypted             = false
-        volume_size           = 8
+        volume_size           = 30
         volume_type           = "gp3"
         iops                  = 5000
         kms_key_id            = null
