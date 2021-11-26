@@ -12,7 +12,14 @@ locals {
   alb_tg_name    = format("%s-%s", local.name, local.environment)
   vpc_name      = format("%s-%s", local.name, local.environment)
   ecs_sg_name = format("%s-%s-%s", local.name, "ecs", local.environment) 
+
   subnets    = sort(tolist(data.aws_subnet_ids.gateway_subnets_ids.ids))
+
+  user_data = <<EOF
+  #!/bin/bash
+  echo 'ECS_CLUSTER=${local.name}-${local.environment}' >> /etc/ecs/ecs.config
+  echo 'ECS_DISABLE_PRIVILEGED=true' >> /etc/ecs/ecs.config
+  EOF
 
   tags = {
     Environment = local.environment
@@ -79,6 +86,8 @@ module "launch_template" {
   instance_type = "c6g.medium"
   key_name      = "gateway-infra"
   ebs_optimized = true
+
+  user_data_base64 = base64encode(local.user_data)
 
   instance_initiated_shutdown_behavior = "stop"
   # vpc_security_group_ids    = [data.aws_security_group.ecs_sg.id]
