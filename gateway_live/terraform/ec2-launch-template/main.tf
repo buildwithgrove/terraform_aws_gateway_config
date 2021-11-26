@@ -14,13 +14,11 @@ locals {
   ecs_sg_name = format("%s-%s-%s", local.name, "ecs", local.environment) 
 
   subnets    = sort(tolist(data.aws_subnet_ids.gateway_subnets_ids.ids))
-
   user_data = <<EOF
   #!/bin/bash
   echo 'ECS_CLUSTER=${local.name}-${local.environment}' >> /etc/ecs/ecs.config
   echo 'ECS_DISABLE_PRIVILEGED=true' >> /etc/ecs/ecs.config
   EOF
-
   tags = {
     Environment = local.environment
     Project     = "Gateway"
@@ -42,11 +40,9 @@ data "aws_vpc" "gateway_vpc" {
 data "aws_security_group" "ecs_sg" {
   name = local.ecs_sg_name
 }
-
 data "aws_subnet_ids" "gateway_subnets_ids" {
   vpc_id = data.aws_vpc.gateway_vpc.id
 }
-
 data "aws_iam_role" "ecs_instance" {
   name = "ecsInstanceRole"
 }
@@ -54,23 +50,18 @@ data "aws_iam_role" "ecs_instance" {
 data "aws_ami" "amazon_linux" {
   most_recent = true
   owners      = ["amazon"]
-
   filter {
     name = "name"
-
     values = [
       "amzn2-ami-ecs-hvm-*-arm64-ebs",
-      
     ]
   }
 }
-
 
 resource "aws_iam_instance_profile" "gateway" {
   name = "${local.name}-${local.environment}"
   role = data.aws_iam_role.ecs_instance.name
   }
-
 
 module "launch_template" {
   source = "../../../gateway_modules/launch-template/"
@@ -82,7 +73,7 @@ module "launch_template" {
   update_default_version  = true  
   disable_api_termination = true
 
-  image_id      = data.aws_ami.amazon_linux.id #"ami-05f9c49f52db7168c"
+  image_id      = data.aws_ami.amazon_linux.id
   instance_type = "c6g.medium"
   key_name      = "gateway-infra"
   ebs_optimized = true
@@ -92,7 +83,6 @@ module "launch_template" {
   instance_initiated_shutdown_behavior = "stop"
   # vpc_security_group_ids    = [data.aws_security_group.ecs_sg.id]
   iam_instance_profile_name = aws_iam_instance_profile.gateway.name
-  #  iam_instance_profile_arn = aws_iam_instance_profile.gateway.arn
 
   enable_monitoring           = true
   associate_public_ip_address = true
@@ -114,7 +104,6 @@ module "launch_template" {
       }
     }
   ]
-
 
   metadata_options = {
     http_endpoint               = "enabled"
@@ -154,32 +143,4 @@ module "launch_template" {
       )
     }
   ]
-
 }
-
-
-
-# module "ec2" {
-
-#     name = local.name
-#     environment = local.environment
-
-#     capacity_providers = ["FARGATE", "FARGATE_SPOT"]
-#     default_capacity_provider_strategy = [{
-#         capacity_provider = "FARGATE"
-#         weight            = "1"
-#         base              = "1" }]
-    
-#     kms_key_id         = null
-#     logging            = "OVERRIDE"
-
-#     cloudwatch_log_group_name     = module.log_group.cloudwatch_log_group_name
-#     cloudwatch_encryption_enabled = false
-
-#     setting_name       = "containerInsights"
-#     container_insights = true    
-    
-# }
-# the ecsInstanceRole IAM policy
-# amzn2-ami-ecs-hvm-2.0.20211120-arm64-ebs [ami-05f9c49f52db7168c]
-#
