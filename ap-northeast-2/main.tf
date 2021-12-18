@@ -7,7 +7,7 @@ provider "aws" {
 
 module "gateway" {
   source  = "app.terraform.io/pokt-foundation/gateway/aws"
-  version = "0.0.3"
+  version = "0.0.3-alpha"
 
   # ---------- ecr -----------
   repo_name                = "${local.name}-${local.environment}"
