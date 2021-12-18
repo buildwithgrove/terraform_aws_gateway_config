@@ -1,10 +1,10 @@
-variable "access_key" {
+variable "aws_access_key_id" {
     description = "value"
     type        = string
     default     = null  
 }
 
-variable "secret_key" {
+variable "aws_secret_access_key" {
     description = "value"
     type        = string
     default     = null   
