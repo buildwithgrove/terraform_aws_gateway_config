@@ -35,7 +35,7 @@ variable "public_subnets" {
 
 variable "ingress_with_cidr_blocks" {
     description = "Security group extra rules for ecs, e.g to add ip address for ssh"
-    type        = list(mag(string)) 
+    type        = list(map(string)) 
     default     =  []
 }
 
