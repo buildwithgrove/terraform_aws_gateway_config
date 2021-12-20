@@ -1,11 +1,52 @@
 variable "aws_access_key_id" {
-    description = "value"
+    description = "aws access key id"
     type        = string
     default     = null  
 }
 
 variable "aws_secret_access_key" {
-    description = "value"
+    description = "aws secret access key"
     type        = string
     default     = null   
+}
+
+variable "environment" {
+    description = "Environement for the gateway, possible values: prod, test, canary,etc."
+    type        = string
+    default     = null   
+}
+variable "region" {
+    description = "aws region where to launch the gateway"
+    type        = string
+    default     = null  
+}
+
+variable "name" {
+    description = "Name of the project, recommended value: gateway"
+    type        = string 
+    default     =  null
+}
+
+variable "public_subnets" {
+    description = "List of cidr values for the vpc public subnets"
+    type        = list(string) 
+    default     =  null
+}
+
+variable "ingress_with_cidr_blocks" {
+    description = "Security group extra rules for ecs, e.g to add ip address for ssh"
+    type        = list(mag(string)) 
+    default     =  []
+}
+
+variable "instance_type" {
+    description = "The ec2 instance type we are launching with"
+    type        = string
+    default     = "c5a.large"
+}
+
+variable "domain_name" {
+    description = "Domain name used to generate ssl certificate"
+    type        = string
+    default     = null
 }
