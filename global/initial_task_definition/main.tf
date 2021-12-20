@@ -77,7 +77,7 @@ module "ecs_task_definition" {
 			"memoryReservation": 2048,
 			"volumesFrom": [],
 			"stopTimeout": null,
-			"image": "${module.gateway.repository_url}:latest",
+			"image": "initial:latest",
 			"startTimeout": null,
 			"firelensConfiguration": null,
 			"dependsOn":[{
