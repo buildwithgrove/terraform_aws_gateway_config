@@ -102,7 +102,7 @@ module "gateway" {
   repo_delete_timeout  = "20m"  
 
   #----- VPC --------
-  cidr        = "10.0.0.0/16"
+  cidr        = var.vpc_cidr
   enable_ipv6 = false
 
   #----- public route --------

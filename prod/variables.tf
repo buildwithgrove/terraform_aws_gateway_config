@@ -50,3 +50,9 @@ variable "domain_name" {
     type        = string
     default     = null
 }
+
+variable "vpc_cidr" {
+    description = "The CIDR block of the VPC"
+    type        = string
+    default     = null
+}
