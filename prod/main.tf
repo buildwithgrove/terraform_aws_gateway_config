@@ -253,7 +253,6 @@ module "gateway" {
 
   image_id      = data.aws_ami.amazon_linux.id
   instance_type = local.instance_type
-  key_name      = "gateway-infra"
   ebs_optimized = true
 
   user_data_base64 = base64encode(
