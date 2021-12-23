@@ -42,7 +42,7 @@ variable "ingress_with_cidr_blocks" {
 variable "instance_type" {
     description = "The ec2 instance type we are launching with"
     type        = string
-    default     = "c5a.large"
+    default     = null
 }
 
 variable "domain_name" {
