@@ -25,6 +25,6 @@ data "aws_iam_role" "autoscaling" {
   name = "AWSServiceRoleForAutoScaling"
 }
 
-data "aws_ecs_task_definition" "gateway" {
-  task_definition = "${local.name}-${local.environment}"
+data "aws_iam_role" "ecs_task_execution_role" {
+  name = "ecsTaskExecutionRole"
 }

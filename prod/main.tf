@@ -381,12 +381,37 @@ module "gateway" {
   logging                        = "NONE"
 
   setting_name       = "containerInsights"
-  container_insights = true    
+  container_insights = true  
+
+  # ---------- task defition ---------
+  create_task_definition = true
+
+  family                   = "${local.name}-${local.environment}"
+  task_role_arn            = "${data.aws_iam_role.ecs_task_execution_role.arn}"
+  execution_role_arn       = "${data.aws_iam_role.ecs_task_execution_role.arn}"
+  cpu                      = 2048
+  memory                   = 3883
+  network_mode             = "bridge"
+  requires_compatibilities = ["EC2"]
+  container_definitions    = local.container_definitions
+  volumes = [
+      {
+          host_path = "/var/run/docker.sock"
+          name      = "docker_sock"
+      }, 
+      {
+          host_path = "/proc/"
+          name      = "proc"
+      }, 
+      {
+          host_path = "/sys/fs/cgroup/"
+          name      = "cgroup" 
+      }
+  ]
 
   # ---------- ecs service  ----------
   create_ecs_service = true
   service_name    = "${local.name}-${local.environment}"
-  task_definition = "${data.aws_ecs_task_definition.gateway.family}:${max(data.aws_ecs_task_definition.gateway.revision)}"
   capacity_provider_strategy = [{
     	capacity_provider =  module.gateway.capacity_provider_name
 			weight            = "1"
