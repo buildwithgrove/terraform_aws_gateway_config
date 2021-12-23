@@ -56,3 +56,9 @@ variable "vpc_cidr" {
     type        = string
     default     = null
 }
+
+variable "redis_node_type" {
+    description = "The elasticache instance class to be used."
+    type        = string
+    default     = null
+}

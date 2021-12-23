@@ -137,7 +137,7 @@ module "gateway" {
   engine_version                = "6.x"
   port                          = 6379
   parameter_group_name          = "default.redis6.x.cluster.on"
-  node_type                     = "cache.r6g.4xlarge"
+  node_type                     = var.redis_node_type
   multi_az_enabled              = true 
   automatic_failover_enabled    = true
   availability_zones            = ["${local.region}a", "${local.region}b", "${local.region}c"]
