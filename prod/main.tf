@@ -444,7 +444,6 @@ module "accelerator_endpoint" {
   config = {
     endpoint_group_region         = local.region
     health_check_interval_seconds = 30
-    health_check_path             = "/"
     health_check_port             = 443
     health_check_protocol         = "TCP"
     threshold_count               = 3
