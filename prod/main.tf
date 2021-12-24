@@ -351,8 +351,6 @@ module "gateway" {
     strategy  = "Rolling"
     triggers  = ["tag"]
     preferences = {
-      checkpoint_delay       = 60
-      checkpoint_percentages = [35, 70, 100]
       instance_warmup        = 120
       min_healthy_percentage = 90
     }
