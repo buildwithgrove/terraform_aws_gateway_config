@@ -115,7 +115,7 @@ module "gateway" {
 
   #----- subnets --------
   subnet_count    = length(local.public_subnets)
-  azs             = ["${local.region}a", "${local.region}b", "${local.region}c"]
+  azs             = [local.az[0], local.az[1], local.az[2]]
   public_subnets  = local.public_subnets
 
   timeout_create_subnet = "10m"
@@ -140,7 +140,7 @@ module "gateway" {
   node_type                     = var.redis_node_type
   multi_az_enabled              = true 
   automatic_failover_enabled    = true
-  availability_zones            = ["${local.region}a", "${local.region}b", "${local.region}c"]
+  availability_zones            = [local.az[0], local.az[1], local.az[2]]
   replication_group_description = "gateway redis elasticache"
   security_group_ids            = [module.redis_sg.id]
   at_rest_encryption_enabled    = true 
@@ -409,7 +409,7 @@ module "gateway" {
 
   # ---------- ecs service  ----------
   create_ecs_service = true
-  service_name    = "${local.name}-${local.environment}"
+  service_name       = "${local.name}-${local.environment}"
   capacity_provider_strategy = [{
     	capacity_provider =  module.gateway.capacity_provider_name
 			weight            = "1"

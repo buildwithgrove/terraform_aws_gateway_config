@@ -16,6 +16,9 @@ locals {
 
   domain_name = var.domain_name
 
+  az = sort(data.aws_availability_zones.available.names)
+
+
   container_definitions = jsonencode([
 		{
 			"dnsSearchDomains": null,

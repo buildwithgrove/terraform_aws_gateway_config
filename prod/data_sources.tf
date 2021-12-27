@@ -28,3 +28,7 @@ data "aws_iam_role" "autoscaling" {
 data "aws_iam_role" "ecs_task_execution_role" {
   name = "ecsTaskExecutionRole"
 }
+
+data "aws_availability_zones" "available" {
+  state = "available"
+}
