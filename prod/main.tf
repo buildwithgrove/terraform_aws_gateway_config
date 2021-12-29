@@ -378,8 +378,9 @@ module "gateway" {
   ecs_cluster_kms_key_id         = null
   logging                        = "NONE"
 
-  setting_name       = "containerInsights"
-  container_insights = true  
+  support_container_insights = local.support_container_insights
+  setting_name               = "containerInsights"
+  container_insights         = true
 
   # ---------- task defition ---------
   create_task_definition = true

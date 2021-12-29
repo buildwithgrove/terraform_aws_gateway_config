@@ -18,6 +18,7 @@ locals {
 
   az = sort(data.aws_availability_zones.available.names)
 
+  support_container_insights = var.support_container_insights
 
   container_definitions = jsonencode([
 		{

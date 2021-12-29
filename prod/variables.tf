@@ -11,7 +11,7 @@ variable "aws_secret_access_key" {
 }
 
 variable "environment" {
-    description = "Environement for the gateway, possible values: prod, test, canary,etc."
+    description = "Environment for the gateway, possible values: prod, test, canary,etc."
     type        = string
     default     = null   
 }
@@ -61,4 +61,10 @@ variable "redis_node_type" {
     description = "The elasticache instance class to be used."
     type        = string
     default     = null
+}
+
+variable "support_container_insights" {
+    description = "Whether the region supports container insights"
+    type        = bool
+    default     = true
 }
