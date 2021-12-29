@@ -457,26 +457,3 @@ module "gateway" {
   disable_scale_in   = false 
 
 }
-
-module "accelerator_endpoint" {
-  
-  source  = "app.terraform.io/pokt-foundation/gateway/aws//modules/accelerator_endpoint_group"
-  version = "1.0.0"
-
-  listener_arn = "arn:aws:globalaccelerator::059424750518:accelerator/aa06a2da-9284-4234-9b97-b5db6cf47461/listener/2e78ac20"
-
-  config = {
-    endpoint_group_region         = local.region
-    health_check_interval_seconds = 30
-    health_check_port             = 443
-    health_check_protocol         = "TCP"
-    threshold_count               = 3
-    traffic_dial_percentage       = 0
-    endpoint_configuration = [{
-      client_ip_preservation_enabled = true
-      endpoint_id                    = module.gateway.alb_arn[0]
-      weight                         = 0
-    }]
-  }
-  
-}
