@@ -329,7 +329,7 @@ module "gateway" {
 
   # ----------  autoscaling group ----------
   min_size                = 0
-  max_size                = 100
+  max_size                = 200
   target_group_arns       = module.gateway.target_group_arns
   launch_template_id      = module.gateway.launch_template_id
   launch_template_version = module.gateway.launch_template_latest_version
@@ -443,7 +443,7 @@ module "gateway" {
   scalable_dimension  = "ecs:service:DesiredCount"
   role_arn            = data.aws_iam_role.ecs_autoscale_role.arn
   min_capacity        = 3
-  max_capacity        = 100
+  max_capacity        = 200
 
   # ---------- application autoscaling policy ----------
   create_appautoscaling_policy = true
