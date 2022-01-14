@@ -185,6 +185,7 @@ module "gateway" {
         "*.s3.t.hmny.io",
         "*.stn.hmny.io",
         "*.t.hmny.io",
+        "pokt-api.iotex.io",
     ]
   validation_method                           = "DNS"
   certificate_transparency_logging_preference = true  
