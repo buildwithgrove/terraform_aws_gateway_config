@@ -10,7 +10,7 @@ provider "aws" {
 module "alb_sg" {
 
   source  = "app.terraform.io/pokt-foundation/gateway/aws//modules/security_groups"
-  version = "1.0.0" 
+  version = "1.0.1" 
 
   #----- security group --------
   name        = format("%s-%s-%s", local.name, "alb", local.environment)
@@ -36,7 +36,7 @@ module "alb_sg" {
 module "ecs_sg" {
 
   source  = "app.terraform.io/pokt-foundation/gateway/aws//modules/security_groups"
-  version = "1.0.0" 
+  version = "1.0.1" 
 
   #----- security group --------
   name        = format("%s-%s-%s", local.name, "ecs", local.environment)
@@ -64,7 +64,7 @@ module "ecs_sg" {
 module "redis_sg" {
   
   source  = "app.terraform.io/pokt-foundation/gateway/aws//modules/security_groups"
-  version = "1.0.0"  
+  version = "1.0.1"  
 
   #----- security group --------
   name        = format("%s-%s-%s", local.name, "redis", local.environment)
@@ -89,7 +89,7 @@ module "redis_sg" {
 
 module "gateway" {
   source  = "app.terraform.io/pokt-foundation/gateway/aws"
-  version = "1.0.0" 
+  version = "1.0.1" 
 
   name    = "${local.name}-${local.environment}"
   vpc_id  = module.gateway.vpc_id
@@ -253,6 +253,7 @@ module "gateway" {
   disable_api_termination = false
 
   image_id      = data.aws_ami.amazon_linux.id
+  key_name      = "gateway-infra"
   instance_type = local.instance_type
   ebs_optimized = true
 
