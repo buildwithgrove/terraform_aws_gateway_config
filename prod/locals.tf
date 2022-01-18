@@ -15,6 +15,8 @@ locals {
   instance_type = var.instance_type
 
   domain_name = var.domain_name
+  
+  create_key_pair = var.create_key_pair
 
   az = sort(data.aws_availability_zones.available.names)
 

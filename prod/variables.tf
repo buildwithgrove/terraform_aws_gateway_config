@@ -68,3 +68,9 @@ variable "support_container_insights" {
     type        = bool
     default     = true
 }
+
+variable "create_key_pair" {
+    description = "Whether to create a new key or use an existing one"
+    type        = bool
+    default     = true
+}

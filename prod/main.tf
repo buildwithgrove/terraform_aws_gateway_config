@@ -243,8 +243,9 @@ module "gateway" {
   ]
 
   # ----------- ssh key ----------
-  ssh_key_name   = "gateway-infra"
-  ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCbkaq3ikeIw0Wi5PHsQ1AxDpzMq6IPxRLubz/FSkFEfPWj73aM6gwaqwNUVH5k5C2HESO3VDEyjhsb6/fy1IXXTEhhfB8OYL+FXNvN+EgwXHdTWvT86DBzWxtWyL/ZB1YpnxXcXmoR24FgGewHNyj8XS4VVG9dvwNfJ7Dg6QTeB+nTT9v6vqaCiklbmsl0yPlyu1uupkj5D0zmaBAa6EPvhLHfUsWdSt33D2MQb5XRXmbfnEhQnBFqcQsV+5sWVVK2BAln3wKnKiiaU+fbP2hoLc8MGCGT2IvK7RH7o4jbUaRTbMJUrvLzvnazKB/X+q/Rb+ixGIqsndmBQd0LYzWd"
+  create_key_pair = local.create_key_pair
+  ssh_key_name    = "gateway-infra"
+  ssh_public_key  = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCbkaq3ikeIw0Wi5PHsQ1AxDpzMq6IPxRLubz/FSkFEfPWj73aM6gwaqwNUVH5k5C2HESO3VDEyjhsb6/fy1IXXTEhhfB8OYL+FXNvN+EgwXHdTWvT86DBzWxtWyL/ZB1YpnxXcXmoR24FgGewHNyj8XS4VVG9dvwNfJ7Dg6QTeB+nTT9v6vqaCiklbmsl0yPlyu1uupkj5D0zmaBAa6EPvhLHfUsWdSt33D2MQb5XRXmbfnEhQnBFqcQsV+5sWVVK2BAln3wKnKiiaU+fbP2hoLc8MGCGT2IvK7RH7o4jbUaRTbMJUrvLzvnazKB/X+q/Rb+ixGIqsndmBQd0LYzWd"
 
   # ----------- launch template ----------
 
