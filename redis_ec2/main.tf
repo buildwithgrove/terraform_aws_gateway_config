@@ -22,7 +22,7 @@ module "redis_cli" {
 
     # redis cli launch template
 
-    source  = "app.terraform.io/pokt-foundation/gateway/aws//modules/launch_template"
+    source  = "app.terraform.io/pokt-foundation/gateway/aws//modules/launch-template"
     version = "1.0.1" 
 
     description = "redis ec2 launch template"
