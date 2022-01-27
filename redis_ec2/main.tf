@@ -31,7 +31,7 @@ module "redis_cli" {
 
     image_id        = data.aws_ami.linux.id
     create_key_pair = false
-    key_name        = "node-infra"
+    key_name        = "gateway-infra"
     instance_type   = "t2.micro"
     ebs_optimized   = true
 
@@ -51,10 +51,11 @@ module "redis_cli" {
             delete_on_termination = true
             encrypted             = false
             volume_size           = 8
-            volume_type           = "gp2"
+            volume_type           = "gp3"
+            iops                  = 100
             kms_key_id            = null
             snapshot_id           = null
-            throughput            = null
+            throughput            = 100
         }
         }
     ]
