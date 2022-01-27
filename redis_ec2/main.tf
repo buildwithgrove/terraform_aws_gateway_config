@@ -102,6 +102,6 @@ module "redis_cli" {
 resource "aws_instance" "redis_cli" {
     launch_template {
         id      = module.redis_cli.id
-        version = module.redis_cli.version
+        version = module.redis_cli.latest_version
     }
 }
