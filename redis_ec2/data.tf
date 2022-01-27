@@ -1,6 +1,6 @@
 data "aws_ami" "linux" {
   most_recent = true
-  owners      = ["self"]
+  owners      = ["099720109477"]
   filter {
     name = "name"
     values = [
