@@ -23,6 +23,6 @@ data "aws_vpc" "gateway_vpc" {
   }
 }
 
-data "aws_subnet_ids" "gateway_subnets_ids" {
+data "aws_subnet_ids" "gateway_subnets" {
   vpc_id = data.aws_vpc.gateway_vpc.id
 }

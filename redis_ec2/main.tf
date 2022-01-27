@@ -1,5 +1,5 @@
 provider "aws" {
-  region     = var.region
+  region     = local.region
   access_key = var.aws_access_key_id
   secret_key = var.aws_secret_access_key
   default_tags {
@@ -8,7 +8,7 @@ provider "aws" {
 }
 
 locals {
-    name        = "redic-cli"
+    name        = "redis-cli"
     environment = var.environment
     region      = var.region
     tags = {
@@ -16,7 +16,6 @@ locals {
     Automation  = "true"
     Owner       = "DevOps team"
     } 
-    subnet_ids  = tolist(data.aws_subnet_ids.gateway_subnets_ids)
 }
 
 module "redis_cli" {
@@ -74,7 +73,7 @@ module "redis_cli" {
         description                 = "eth0"
         device_index                = 0
         security_groups             = [data.aws_security_group.ecs_sg.id]
-        subnet_id                   = local.subnet_ids[0]
+        subnet_id                   = tolist(data.aws_subnet_ids.gateway_subnets.ids)[0]
         associate_public_ip_address = true
         },
     ]
