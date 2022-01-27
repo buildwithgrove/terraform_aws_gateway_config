@@ -21,3 +21,9 @@ variable "environment" {
     type        = string
     default     = null
 }
+
+variable "ingress_with_cidr_blocks" {
+    description = "Security group extra rules, e.g to add ip address for ssh"
+    type        = list(map(string)) 
+    default     =  []
+}

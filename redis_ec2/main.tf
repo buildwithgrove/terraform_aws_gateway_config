@@ -16,6 +16,7 @@ locals {
     Automation  = "true"
     Owner       = "DevOps team"
     } 
+    ingress_with_cidr_blocks = var.ingress_with_cidr_blocks
 }
 
 module "cli_sg" {
@@ -33,11 +34,6 @@ module "cli_sg" {
   
   #----- rules --------
   ingress_with_cidr_blocks = local.ingress_with_cidr_blocks == [] ? null : local.ingress_with_cidr_blocks
-
-  ingress_with_source_security_group_id = [ {
-    rule = "ecs-tcp"
-    source_security_group_id = module.alb_sg.id
-  } ]
 
   egress_with_cidr_blocks = [ {
     rule = "all-all"
