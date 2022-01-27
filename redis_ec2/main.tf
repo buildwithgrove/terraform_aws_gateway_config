@@ -18,6 +18,34 @@ locals {
     } 
 }
 
+module "cli_sg" {
+
+  source  = "app.terraform.io/pokt-foundation/gateway/aws//modules/security_groups"
+  version = "1.0.1" 
+
+  #----- security group --------
+  name        = format("%s-%s-%s", local.name, "ecs", local.environment)
+  vpc_id      = data.aws_vpc.gateway_vpc.id
+  description = format("%s %s security group", local.name, "ecs")
+
+  timeout_sg_create = "5m"
+  timeout_sg_delete = "7m"
+  
+  #----- rules --------
+  ingress_with_cidr_blocks = local.ingress_with_cidr_blocks == [] ? null : local.ingress_with_cidr_blocks
+
+  ingress_with_source_security_group_id = [ {
+    rule = "ecs-tcp"
+    source_security_group_id = module.alb_sg.id
+  } ]
+
+  egress_with_cidr_blocks = [ {
+    rule = "all-all"
+    cidr_blocks = "0.0.0.0/0"
+  } ]
+  
+}
+
 module "redis_cli" {
 
     # redis cli launch template
