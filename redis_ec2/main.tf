@@ -52,7 +52,7 @@ module "redis_cli" {
             encrypted             = false
             volume_size           = 8
             volume_type           = "gp2"
-            iops                  = 100
+            iops                  = null
             kms_key_id            = null
             snapshot_id           = null
             throughput            = null
