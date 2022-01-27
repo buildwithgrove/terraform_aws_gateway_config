@@ -55,7 +55,7 @@ module "redis_cli" {
             iops                  = 100
             kms_key_id            = null
             snapshot_id           = null
-            throughput            = 100
+            throughput            = 125
         }
         }
     ]
