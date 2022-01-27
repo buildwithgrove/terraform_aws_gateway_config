@@ -15,3 +15,9 @@ variable "region" {
     type        = string
     default     = null  
 }
+
+variable "environment" {
+    description = "Environment for the gateway, possible values: prod, test, canary,etc."
+    type        = string
+    default     = null
+}
