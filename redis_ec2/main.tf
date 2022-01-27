@@ -29,10 +29,11 @@ module "redis_cli" {
     update_default_version  = true  
     disable_api_termination = false
 
-    image_id      = data.aws_ami.linux.id
-    key_name      = "node-infra"
-    instance_type = "t2.micro"
-    ebs_optimized = true
+    image_id        = data.aws_ami.linux.id
+    create_key_pair = false
+    key_name        = "node-infra"
+    instance_type   = "t2.micro"
+    ebs_optimized   = true
 
 
     instance_initiated_shutdown_behavior = "stop"
@@ -72,7 +73,7 @@ module "redis_cli" {
         description                 = "eth0"
         device_index                = 0
         security_groups             = [data.aws_security_group.ecs_sg.id]
-        subnet_id                   = tolist(data.aws_subnet_ids.gateway_subnets_ids)[0]
+        subnet_id                   = data.aws_subnet_ids.gateway_subnets_ids
         associate_public_ip_address = true
         },
     ]
