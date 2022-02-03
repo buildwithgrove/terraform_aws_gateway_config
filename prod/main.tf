@@ -391,8 +391,8 @@ module "gateway" {
   family                   = "${local.name}-${local.environment}"
   task_role_arn            = "${data.aws_iam_role.ecs_task_execution_role.arn}"
   execution_role_arn       = "${data.aws_iam_role.ecs_task_execution_role.arn}"
-  cpu                      = 2048
-  memory                   = 3883
+  cpu                      = 1536
+  memory                   = 3072
   network_mode             = "bridge"
   requires_compatibilities = ["EC2"]
   container_definitions    = local.container_definitions
