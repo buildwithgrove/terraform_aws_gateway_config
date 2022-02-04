@@ -186,6 +186,7 @@ module "gateway" {
         "*.stn.hmny.io",
         "*.t.hmny.io",
         "pokt-api.iotex.io",
+        "rpc.fuse.io",
     ]
   validation_method                           = "DNS"
   certificate_transparency_logging_preference = true  
