@@ -455,7 +455,7 @@ module "gateway" {
   policy_name            = "${local.name}-${local.environment}-TargetTrackingScalling"
   policy_type            = "TargetTrackingScaling"
   predefined_metric_type = "ECSServiceAverageCPUUtilization"
-  target_value       = 20
+  target_value       = 30
   scale_in_cooldown  = 300
   scale_out_cooldown = 300
   disable_scale_in   = false 
