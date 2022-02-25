@@ -440,7 +440,7 @@ module "gateway" {
       container_port   = 3000
       container_name   = "gateway"
   }]
-  deployment_controller_type 	        = "ECS"
+  deployment_controller_type 	        = "CODE_DEPLOY"
   deployment_circuit_breaker          = true 
   deployment_circuit_breaker_rollback = true
 
