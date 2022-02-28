@@ -441,8 +441,8 @@ module "gateway" {
       container_name   = "gateway"
   }]
   deployment_controller_type 	        = "CODE_DEPLOY"
-  deployment_circuit_breaker          = true 
-  deployment_circuit_breaker_rollback = true
+  deployment_circuit_breaker          = false 
+  deployment_circuit_breaker_rollback = false
 
   ecs_service_tags = {
     "Name" = "${local.name}-${local.environment}"
