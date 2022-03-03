@@ -217,7 +217,28 @@ module "gateway" {
 
   target_groups = [
       {
-        name                 = format("%s-%s", local.name, local.environment)
+        name                 = format("%s-%s-%s", local.name, local.environment, "green")
+        port                 = 3000
+        protocol             = "HTTP"
+        protocol_version     = "HTTP1"
+        target_type          = "instance"
+        deregistration_delay           = 120
+        load_balancing_algorithm_type  = "least_outstanding_requests"
+
+        health_check = {
+          enabled             = true
+          interval            = 30
+          path                = "/"
+          port                = "traffic-port"
+          healthy_threshold   = 5
+          unhealthy_threshold = 2
+          timeout             = 5
+          protocol            = "HTTP"
+          matcher             = "200"
+        }
+      },
+      {
+        name                 = format("%s-%s-%s", local.name, local.environment, "blue")
         port                 = 3000
         protocol             = "HTTP"
         protocol_version     = "HTTP1"
