@@ -1,6 +1,6 @@
 locals {
-  name        = var.name
-  environment = var.environment
+  name        = var.resource_name
+  environment = var.env
   region      = var.region
   tags = {
     Environment = local.environment
