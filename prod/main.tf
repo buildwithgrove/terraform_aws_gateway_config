@@ -481,3 +481,30 @@ module "gateway" {
   disable_scale_in   = false 
 
 }
+
+module "vpc-peering" {
+  source  = "grem11n/vpc-peering/aws"
+  version = "4.0.1"
+
+    providers = {
+    aws.this = aws.this
+    aws.peer = aws.peer
+  }
+
+  peer_vpc_id = data.aws_vpc.global_dispatcher_vpc.id
+  this_vpc_id = module.gateway.vpc_id
+
+  peer_rts_ids = [data.aws_route_table.global_dispatcher.id]
+  this_rts_ids = [module.gateway.public_route_table_id]
+
+  auto_accept_peering = true
+
+  tags = {
+    Name  = "${local.name}-${local.environment}-${local.region}-us-west-2-peering"
+  }
+
+  depends_on = [
+    module.gateway
+  ]
+
+}
