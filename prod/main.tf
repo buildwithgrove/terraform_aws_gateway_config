@@ -84,6 +84,11 @@ module "redis_sg" {
   timeout_sg_delete = "7m"
   
   #----- rules --------
+  ingress_with_cidr_blocks = [{
+    rule        = "redis-tcp"
+    cidr_blocks = "10.22.8.0/22"
+  }]
+
   ingress_with_source_security_group_id = [ {
     rule = "redis-tcp"
     source_security_group_id = module.ecs_sg.id
