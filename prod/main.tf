@@ -8,7 +8,6 @@ terraform {
   }
 
 provider "aws" {
-  alias      = "this"
   region     = local.region
   access_key = var.aws_access_key_id
   secret_key = var.aws_secret_access_key
@@ -489,7 +488,7 @@ module "vpc-peering" {
   version = "4.0.1"
 
     providers = {
-    aws.this = aws.this
+    aws.this = aws
     aws.peer = aws.peer
   }
 
