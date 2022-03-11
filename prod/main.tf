@@ -8,12 +8,18 @@ terraform {
   }
 
 provider "aws" {
+  alias      = "this"
   region     = local.region
   access_key = var.aws_access_key_id
   secret_key = var.aws_secret_access_key
   default_tags {
     tags = local.tags
   }
+}
+
+provider "aws" {
+  alias      = "peer"
+  region     = "us-west-2"
 }
 
 module "alb_sg" {
