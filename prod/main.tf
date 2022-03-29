@@ -161,7 +161,6 @@ module "gateway" {
   node_type                     = var.redis_node_type
   multi_az_enabled              = true 
   automatic_failover_enabled    = true
-  availability_zones            = [local.az[0], local.az[1], local.az[2]]
   replication_group_description = "gateway redis elasticache"
   security_group_ids            = [module.redis_sg.id]
   at_rest_encryption_enabled    = true 
