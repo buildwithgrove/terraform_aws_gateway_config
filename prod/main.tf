@@ -136,7 +136,7 @@ module "gateway" {
 
   #----- subnets --------
   subnet_count    = length(local.public_subnets)
-  azs             = [local.az[0], local.az[1], local.az[2]]
+  azs             = local.az
   public_subnets  = local.public_subnets
 
   timeout_create_subnet = "10m"
