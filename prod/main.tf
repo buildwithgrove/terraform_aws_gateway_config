@@ -363,9 +363,9 @@ module "gateway" {
   protect_from_scale_in   = false
 
   health_check_type         = "EC2" #"ELB"
-  health_check_grace_period = 300
+  health_check_grace_period = 150
 
-  default_cooldown          = 300
+  default_cooldown          = 150
 
 
   force_delete   = false
