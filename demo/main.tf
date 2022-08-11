@@ -131,7 +131,7 @@ module "gateway" {
   repo_delete_timeout  = "20m"  
 
   #----- VPC --------
-  cidr        = local.vpc_cidr
+  cidr        = var.vpc_cidr
   enable_ipv6 = false
 
   #----- public route --------
@@ -166,7 +166,7 @@ module "gateway" {
   engine_version                = "6.x"
   port                          = 6379
   parameter_group_name          = "default.redis6.x.cluster.on"
-  node_type                     = local.redis_node_type
+  node_type                     = var.redis_node_type
   multi_az_enabled              = true 
   automatic_failover_enabled    = true
   replication_group_description = "gateway redis elasticache"
