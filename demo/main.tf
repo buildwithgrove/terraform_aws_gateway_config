@@ -360,8 +360,8 @@ module "gateway" {
   ]
 
   # ----------  autoscaling group ----------
-  min_size                = 0
-  max_size                = 200
+  min_size                = 1
+  max_size                = 10
   target_group_arns       = module.gateway.target_group_arns
   launch_template_id      = module.gateway.launch_template_id
   launch_template_version = module.gateway.launch_template_latest_version
@@ -371,9 +371,9 @@ module "gateway" {
   protect_from_scale_in   = false
 
   health_check_type         = "EC2" #"ELB"
-  health_check_grace_period = 300
+  health_check_grace_period = 150
 
-  default_cooldown          = 300
+  default_cooldown          = 150
 
 
   force_delete   = false
@@ -383,8 +383,8 @@ module "gateway" {
     strategy  = "Rolling"
     triggers  = ["tag"]
     preferences = {
-      instance_warmup        = 120
-      min_healthy_percentage = 90
+      instance_warmup        = 40
+      min_healthy_percentage = 70
     }
   }
   tags_as_map = {
@@ -394,7 +394,7 @@ module "gateway" {
   # ------------ ecs capacity provider ----------
   auto_scaling_group_arn = module.gateway.autoscaling_group_arn
   managed_scaling_status = "ENABLED"
-  managed_scaling_instance_warmup_period = 300
+  managed_scaling_instance_warmup_period = 150
   managed_scaling_target_capacity = 100
 
   # ---------- ecs cluster ----------
@@ -450,8 +450,8 @@ module "gateway" {
   }]
   desired_count                       = 3 
   scheduling_strategy 			        	= "REPLICA"
-  deployment_minimum_healthy_percent 	= 100
-  deployment_maximum_percent			    = 200	
+  deployment_minimum_healthy_percent 	= 50
+  deployment_maximum_percent			    = 100
   health_check_grace_period_seconds	  = 90
   
   load_balancer = [{
