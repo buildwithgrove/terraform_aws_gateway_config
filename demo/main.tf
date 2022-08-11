@@ -475,7 +475,7 @@ module "gateway" {
   scalable_dimension  = "ecs:service:DesiredCount"
   role_arn            = data.aws_iam_role.ecs_autoscale_role.arn
   min_capacity        = 3
-  max_capacity        = 200
+  max_capacity        = 100
 
   # ---------- application autoscaling policy ----------
   create_appautoscaling_policy = true
