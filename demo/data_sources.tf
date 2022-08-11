@@ -32,3 +32,19 @@ data "aws_iam_role" "ecs_task_execution_role" {
 data "aws_availability_zones" "available" {
   state = "available"
 }
+
+data "aws_vpc" "global_dispatcher_vpc" {
+  provider = aws.peer
+  filter {
+     name = "tag:Name"
+     values = ["global_dispatcher-prod"]
+   }
+}
+
+data "aws_route_table" "global_dispatcher" {
+    provider = aws.peer
+    filter {
+        name = "tag:Name"
+        values = ["global_dispatcher-private-rt"]   
+    }
+}

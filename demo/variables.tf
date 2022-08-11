@@ -1,16 +1,14 @@
 variable "aws_access_key_id" {
     description = "aws access key id"
-    type        = string
-    default     = null  
+    type        = string  
 }
 
 variable "aws_secret_access_key" {
     description = "aws secret access key"
     type        = string
-    default     = null   
 }
 
-variable "env" {
+variable "environment" {
     description = "Environment for the gateway, possible values: prod, test, canary,etc."
     type        = string
     default     = null   
@@ -21,7 +19,7 @@ variable "region" {
     default     = null  
 }
 
-variable "resource_name" {
+variable "name" {
     description = "Name of the project, recommended value: gateway"
     type        = string 
     default     =  null

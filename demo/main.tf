@@ -1,4 +1,12 @@
 terraform {
+  
+  cloud {
+    organization = "pokt-foundation"
+
+    workspaces {
+      name = "vpc_peering_test"
+    }
+  }
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -14,6 +22,13 @@ provider "aws" {
   default_tags {
     tags = local.tags
   }
+}
+
+provider "aws" {
+  alias      = "peer"
+  region     = "us-west-2"
+  access_key = var.aws_access_key_id
+  secret_key = var.aws_secret_access_key
 }
 
 module "alb_sg" {
@@ -84,6 +99,11 @@ module "redis_sg" {
   timeout_sg_delete = "7m"
   
   #----- rules --------
+  ingress_with_cidr_blocks = [{
+    rule        = "redis-tcp"
+    cidr_blocks = "10.22.8.0/22"
+  }]
+
   ingress_with_source_security_group_id = [ {
     rule = "redis-tcp"
     source_security_group_id = module.ecs_sg.id
@@ -111,7 +131,7 @@ module "gateway" {
   repo_delete_timeout  = "20m"  
 
   #----- VPC --------
-  cidr        = var.vpc_cidr
+  cidr        = local.vpc_cidr
   enable_ipv6 = false
 
   #----- public route --------
@@ -124,7 +144,7 @@ module "gateway" {
 
   #----- subnets --------
   subnet_count    = length(local.public_subnets)
-  azs             = [local.az[0], local.az[1], local.az[2]]
+  azs             = local.az
   public_subnets  = local.public_subnets
 
   timeout_create_subnet = "10m"
@@ -146,10 +166,9 @@ module "gateway" {
   engine_version                = "6.x"
   port                          = 6379
   parameter_group_name          = "default.redis6.x.cluster.on"
-  node_type                     = var.redis_node_type
+  node_type                     = local.redis_node_type
   multi_az_enabled              = true 
   automatic_failover_enabled    = true
-  availability_zones            = [local.az[0], local.az[1], local.az[2]]
   replication_group_description = "gateway redis elasticache"
   security_group_ids            = [module.redis_sg.id]
   at_rest_encryption_enabled    = true 
@@ -217,28 +236,7 @@ module "gateway" {
 
   target_groups = [
       {
-        name                 = format("%s-%s-%s", local.name, local.environment, "green")
-        port                 = 3000
-        protocol             = "HTTP"
-        protocol_version     = "HTTP1"
-        target_type          = "instance"
-        deregistration_delay           = 120
-        load_balancing_algorithm_type  = "least_outstanding_requests"
-
-        health_check = {
-          enabled             = true
-          interval            = 30
-          path                = "/"
-          port                = "traffic-port"
-          healthy_threshold   = 5
-          unhealthy_threshold = 2
-          timeout             = 5
-          protocol            = "HTTP"
-          matcher             = "200"
-        }
-      },
-      {
-        name                 = format("%s-%s-%s", local.name, local.environment, "blue")
+        name                 = format("%s-%s", local.name, local.environment)
         port                 = 3000
         protocol             = "HTTP"
         protocol_version     = "HTTP1"
@@ -452,8 +450,8 @@ module "gateway" {
   }]
   desired_count                       = 3 
   scheduling_strategy 			        	= "REPLICA"
-  deployment_minimum_healthy_percent 	= 50
-  deployment_maximum_percent			    = 100	
+  deployment_minimum_healthy_percent 	= 100
+  deployment_maximum_percent			    = 200	
   health_check_grace_period_seconds	  = 90
   
   load_balancer = [{
@@ -461,9 +459,9 @@ module "gateway" {
       container_port   = 3000
       container_name   = "gateway"
   }]
-  deployment_controller_type 	        = "CODE_DEPLOY"
-  deployment_circuit_breaker          = false 
-  deployment_circuit_breaker_rollback = false
+  deployment_controller_type 	        = "ECS"
+  deployment_circuit_breaker          = true 
+  deployment_circuit_breaker_rollback = true
 
   ecs_service_tags = {
     "Name" = "${local.name}-${local.environment}"
@@ -490,4 +488,27 @@ module "gateway" {
   scale_out_cooldown = 300
   disable_scale_in   = false 
 
+}
+
+module "vpc-peering" {
+  source  = "app.terraform.io/pokt-foundation/vpc-peering/aws"
+  version = "1.0.0"
+
+
+    providers = {
+    aws.this = aws
+    aws.peer = aws.peer
+  }
+
+  peer_vpc_id = data.aws_vpc.global_dispatcher_vpc.id
+  this_vpc_id = module.gateway.vpc_id
+
+  peer_rts_ids = [data.aws_route_table.global_dispatcher.id]
+  this_rts_ids = [module.gateway.public_route_table_id]
+
+  auto_accept_peering = true
+
+  tags = {
+    Name  = "${local.name}-${local.environment}-${local.region}-us-west-2-peering"
+  }
 }
