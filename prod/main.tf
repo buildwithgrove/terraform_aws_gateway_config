@@ -483,8 +483,8 @@ module "gateway" {
 }
 
 module "vpc-peering" {
-  source  = "grem11n/vpc-peering/aws"
-  version = "4.0.1"
+  source  = "app.terraform.io/pokt-foundation/vpc-peering/aws"
+  version = "1.0.0"
 
     providers = {
     aws.this = aws
@@ -502,9 +502,4 @@ module "vpc-peering" {
   tags = {
     Name  = "${local.name}-${local.environment}-${local.region}-us-west-2-peering"
   }
-
-  depends_on = [
-    module.gateway
-  ]
-
 }
