@@ -230,8 +230,7 @@ module "gateway" {
       {
         name                 = format("%s-%s", local.name, local.environment)
         port                 = 3000
-        protocol             = "HTTP"
-        protocol_version     = "HTTP1"
+        protocol             = "TCP"
         target_type          = "instance"
         deregistration_delay           = 120
         load_balancing_algorithm_type  = "least_outstanding_requests"
@@ -239,13 +238,10 @@ module "gateway" {
         health_check = {
           enabled             = true
           interval            = 30
-          path                = "/"
           port                = "traffic-port"
-          healthy_threshold   = 5
-          unhealthy_threshold = 2
-          timeout             = 5
-          protocol            = var.load_balancer_type == "application" ? "HTTP": "TCP"
-          matcher             = "200"
+          healthy_threshold   = 3
+          unhealthy_threshold = 3
+          protocol            = "TCP"
         }
       }
   ]

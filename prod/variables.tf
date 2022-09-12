@@ -80,7 +80,7 @@ variable "create_key_pair" {
 variable "enable_http2" {
   description = "Whether to enable HTTP2"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "load_balancer_type" {
