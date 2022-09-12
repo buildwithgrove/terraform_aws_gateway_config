@@ -213,11 +213,11 @@ module "gateway" {
   
   # ---------- ALB ----------
 
-  load_balancer_type         = "application"
+  load_balancer_type         = var.load_balancer_type
   internal                   = false
   security_groups            = [module.alb_sg.id] 
   subnets                    = module.gateway.public_subnet_ids
-  enable_http2               = true
+  enable_http2               = var.enable_http2
   ip_address_type            = "ipv4"
   drop_invalid_header_fields = true
   desync_mitigation_mode     = "defensive"
@@ -244,7 +244,7 @@ module "gateway" {
           healthy_threshold   = 5
           unhealthy_threshold = 2
           timeout             = 5
-          protocol            = "HTTP"
+          protocol            = var.load_balancer_type == "application" ? "HTTP": "TCP"
           matcher             = "200"
         }
       }
