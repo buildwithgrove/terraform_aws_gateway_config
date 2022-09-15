@@ -474,7 +474,7 @@ module "gateway" {
   resource_id         = format("service/%s/%s", module.gateway.cluster_name, module.gateway.service_name)
   scalable_dimension  = "ecs:service:DesiredCount"
   role_arn            = data.aws_iam_role.ecs_autoscale_role.arn
-  min_capacity        = 3
+  min_capacity        = 15
   max_capacity        = 100
 
   # ---------- application autoscaling policy ----------
