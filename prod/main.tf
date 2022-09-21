@@ -474,10 +474,10 @@ module "gateway" {
 
   policy_name            = "${local.name}-${local.environment}-TargetTrackingScalling"
   policy_type            = "TargetTrackingScaling"
-  predefined_metric_type = "ECSServiceAverageCPUUtilization"
-  target_value       = 25
-  scale_in_cooldown  = 150
-  scale_out_cooldown = 150
+  predefined_metric_type = "ALBRequestCountPerTarget"
+  target_value       = 5000
+  scale_in_cooldown  = 120
+  scale_out_cooldown = 120
   disable_scale_in   = false 
 
 }
