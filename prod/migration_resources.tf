@@ -2,7 +2,7 @@
 resource "aws_security_group" "migration" {
   name        = local.name
   description = "Allow ${local.name} inbound traffic"
-  vpc_id      = local.vpc_id
+  vpc_id      = module.gateway.vpc_id
 
   ingress {
     description      = local.name
