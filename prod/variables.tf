@@ -75,7 +75,7 @@ variable "create_key_pair" {
     default     = true
 }
 
-variable "gcp-region" {
+variable "gcp_region" {
     description = "the gcp region equivalent for gw migration"
     type        = string
     default     = null

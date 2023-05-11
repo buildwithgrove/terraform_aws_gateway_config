@@ -65,7 +65,7 @@ locals {
 
     map \$http_host \$backend {
         default "";
-        ~^(?<subdomain>.+)\.gateway\.pokt\.network\$ https://\$subdomain.middleware.${var.gcp-region-value}.v2.pokt.network;
+        ~^(?<subdomain>.+)\.gateway\.pokt\.network\$ https://\$subdomain.middleware.${var.gcp_region}.v2.pokt.network;
     }
 
     resolver 100.100.100.100;
