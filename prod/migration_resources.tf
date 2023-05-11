@@ -42,7 +42,7 @@ resource "aws_security_group" "migration" {
 }
 
 module "gateway_load_balancing" {
-  source  = "app.terraform.io/pokt-foundation/gateway/aws//modules/load_balancing"
+  source  = "app.terraform.io/pokt-foundation/gateway/aws"
   version = "1.0.1"
   
   name                       = "${local.name}-migration"
