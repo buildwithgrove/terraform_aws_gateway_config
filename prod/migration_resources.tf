@@ -42,7 +42,7 @@ resource "aws_security_group" "migration" {
 }
 
 module "gateway_load_balancing" {
-  source  = "app.terraform.io/pokt-foundation/gateway/aws"
+  source  = "app.terraform.io/pokt-foundation/gateway/aws//modules/load_balancing"
   version = "1.0.1"
   
   name                       = "${local.name}-migration"
@@ -86,7 +86,7 @@ module "gateway_load_balancing" {
   https_listeners = [
     # Forward action is default, either when defined or undefined 
     {
-      load_balancer_arn  = module.gateway_load_balancing.alb_arn[0]
+      load_balancer_arn  = module.gateway_load_balancing.arn[0]
       port               = 443
       protocol           = "HTTPS"
       certificate_arn    = module.gateway.ssl_arn[0]
