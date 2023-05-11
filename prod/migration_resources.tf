@@ -278,6 +278,8 @@ module "gateway_autoscaling" {
   service_linked_role_arn = data.aws_iam_role.autoscaling.arn
   termination_policies    = ["OldestLaunchTemplate", "OldestInstance"]
   protect_from_scale_in   = false
+  auto_scaling_group_arn = module.gateway_autoscaling.autoscaling_group_arn
+
 
   health_check_type         = "EC2"
   health_check_grace_period = 150
