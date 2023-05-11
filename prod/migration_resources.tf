@@ -97,242 +97,137 @@ module "gateway_load_balancing" {
   ]
 }
 
-# module "gateway_launch-template" {
-#   source  = "app.terraform.io/pokt-foundation/gateway/aws//modules/launch-template"
-#   version = "1.0.1"
+module "gateway_launch-template" {
+  source  = "app.terraform.io/pokt-foundation/gateway/aws//modules/launch-template"
+  version = "1.0.1"
 
-#   name                    = "${local.name}-migration"
-#   description             = "gateway migration ec2 launch template"
-#   update_default_version  = true  
-#   disable_api_termination = false
+  name                    = "${local.name}-migration"
+  description             = "gateway migration ec2 launch template"
+  update_default_version  = true  
+  disable_api_termination = false
 
-#   image_id        = data.aws_ami.amazon_linux.id
-#   key_name        = "gateway-infra"
-#   create_key_pair = false
-#   instance_type   = "m5.large"
-#   ebs_optimized   = true
+  image_id        = data.aws_ami.amazon_linux.id
+  key_name        = "gateway-infra"
+  create_key_pair = false
+  instance_type   = "m5.large"
+  ebs_optimized   = true
 
-#   user_data_base64 = base64encode(
-#   <<-EOT
-#     #!/bin/bash
-#     set -x
+  user_data_base64 = base64encode(
+  <<-EOT
+    #!/bin/bash
+    set -x
 
-#     sudo yum update
-#     sudo yum install -y nginx
+    sudo yum update
+    sudo yum install -y nginx
 
-#     cat <<EOF > /tmp/nginx.conf
-#     user nginx;
-#     worker_processes auto;
-#     error_log /var/log/nginx/error.log debug;
-#     pid /run/nginx.pid;
+    cat <<EOF > /tmp/nginx.conf
+    user nginx;
+    worker_processes auto;
+    error_log /var/log/nginx/error.log debug;
+    pid /run/nginx.pid;
 
-#     # Load dynamic modules. See /usr/share/doc/nginx/README.dynamic.
-#     include /usr/share/nginx/modules/*.conf;
+    # Load dynamic modules. See /usr/share/doc/nginx/README.dynamic.
+    include /usr/share/nginx/modules/*.conf;
 
-#     events {
-#         worker_connections 1024;
-#     }
+    events {
+        worker_connections 1024;
+    }
 
-#     http {
-#         log_format  main  '\$remote_addr - \$remote_user [\$time_local] "\$request" '
-#                           '\$status \$body_bytes_sent "\$http_referer" '
-#                           '"\$http_user_agent" "\$http_x_forwarded_for"';
+    http {
+        log_format  main  '\$remote_addr - \$remote_user [\$time_local] "\$request" '
+                          '\$status \$body_bytes_sent "\$http_referer" '
+                          '"\$http_user_agent" "\$http_x_forwarded_for"';
 
-#         access_log  /var/log/nginx/access.log  main;
+        access_log  /var/log/nginx/access.log  main;
 
-#         sendfile            on;
-#         tcp_nopush          on;
-#         keepalive_timeout   65;
-#         types_hash_max_size 4096;
+        sendfile            on;
+        tcp_nopush          on;
+        keepalive_timeout   65;
+        types_hash_max_size 4096;
 
-#         include             /etc/nginx/mime.types;
-#         default_type        application/octet-stream;
+        include             /etc/nginx/mime.types;
+        default_type        application/octet-stream;
 
-#         # Load modular configuration files from the /etc/nginx/conf.d directory.
-#         # See http://nginx.org/en/docs/ngx_core_module.html#include
-#         # for more information.
-#         include /etc/nginx/conf.d/*.conf;
-
-
-#     map \$http_host \$backend {
-#         default "";
-#         ~^(?<subdomain>.+)\.gateway\.pokt\.network\$ https://\$subdomain.middleware.eu-southwest1-prod.v2.pokt.network;
-#     }
-
-#     resolver 100.100.100.100;
-
-#     server {
-#         listen 80;
-#         server_name *.gateway.pokt.network;
-
-#         # Ensure requests are sent with the original host header
-#         proxy_set_header Host \$host;
-
-#         # Support for POST requests with bodies
-#         client_max_body_size 100m;
-
-#         location / {
-#             # Proxy to the appropriate backend
-#             proxy_pass \$backend;
-#             proxy_http_version 1.1;
-#             proxy_set_header Upgrade \$http_upgrade;
-#             proxy_set_header Connection "upgrade";
-#             proxy_set_header X-Real-IP \$remote_addr;
-#             proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-#             proxy_set_header X-Forwarded-Proto \$scheme;
-#         }
-
-#         location /healthz {
-#             return 200 'Healthy';
-#             add_header Content-Type text/plain;
-#         }
-#       }
-#     }
-#     EOF
-#     sudo mv /tmp/nginx.conf /etc/nginx/nginx.conf
-
-#     sudo systemctl enable nginx
-#     sudo systemctl restart nginx
-#     sudo systemctl status nginx
-#     echo "All DONE!"
-#   EOT 
-#   )
-
-#   instance_initiated_shutdown_behavior = "stop"
-#   iam_instance_profile_name = data.aws_iam_instance_profile.gateway.name
-
-#   enable_monitoring           = true
-#   associate_public_ip_address = true
-#   block_device_mappings = [
-#     {
-#       # Root volume
-#       device_name = "/dev/xvda"
-#       no_device   = 0
-#       virtual_name =  null
-#       ebs = {
-#         delete_on_termination = true
-#         encrypted             = false
-#         volume_size           = 30
-#         volume_type           = "gp3"
-#         iops                  = 5000
-#         kms_key_id            = null
-#         snapshot_id           = null
-#         throughput            = 250
-#       }
-#     }
-#   ]
-
-#   metadata_options = {
-#     http_endpoint               = "enabled"
-#     http_tokens                 = "optional"
-#     http_put_response_hop_limit = 1
-#     http_protocol_ipv6          = "disabled"
-#   }
-
-#   network_interfaces = [
-#     {
-#       delete_on_termination       = true
-#       description                 = "eth0"
-#       device_index                = 0
-#       security_groups             = [aws_security_group.migration.id]
-#       associate_public_ip_address = true
-#       # interface_type              = "Network interface"
-#     },
-#   ]
-
-#   tag_specifications = [
-#     {
-#       resource_type = "instance"
-#       tags          = merge(
-#         {
-#           Name = "${local.name}-migration"
-#         },
-#         local.tags,
-#       )
-#     },
-#     {
-#       resource_type = "volume"
-#       tags          = merge(
-#         {
-#           Name = "${local.name}-migration"
-#         },
-#         local.tags,
-#       )
-#     }
-#   ]
-
-# }
-
-# module "gateway_autoscaling" {
-#   source  = "terraform-aws-modules/autoscaling/aws"
-#   version = "2.0.0"
-
-#   name                    = "${local.name}-migration"
-#   min_size                = 1
-#   max_size                = 3
-#   desired_capacity        = 1
-#   target_group_arns       = module.gateway_load_balancing.target_group_arns
-#   launch_template_id      = module.gateway_launch-template.id
-#   launch_template_version = module.gateway_launch-template.latest_version
-#   vpc_zone_identifier     = module.gateway.public_subnet_ids
-#   service_linked_role_arn = data.aws_iam_role.autoscaling.arn
-#   termination_policies    = ["OldestLaunchTemplate", "OldestInstance"]
-#   protect_from_scale_in   = false
+        # Load modular configuration files from the /etc/nginx/conf.d directory.
+        # See http://nginx.org/en/docs/ngx_core_module.html#include
+        # for more information.
+        include /etc/nginx/conf.d/*.conf;
 
 
-#   health_check_type         = "EC2"
-#   health_check_grace_period = 150
-#   wait_for_capacity_timeout = 0
+    map \$http_host \$backend {
+        default "";
+        ~^(?<subdomain>.+)\.gateway\.pokt\.network\$ https://\$subdomain.middleware.eu-southwest1-prod.v2.pokt.network;
+    }
 
-#   default_cooldown          = 150
+    resolver 100.100.100.100;
 
+    server {
+        listen 80;
+        server_name *.gateway.pokt.network;
 
-#   force_delete   = false
+        # Ensure requests are sent with the original host header
+        proxy_set_header Host \$host;
 
-#   instance_refresh = {
-#     strategy  = "Rolling"
-#     triggers  = ["tag"]
-#     preferences = {
-#       instance_warmup        = 120
-#       min_healthy_percentage = 90
-#     }
-#   }
-#   tags_as_map = {
-#     Name  = format("%s-migration", local.name)
-#   }
-# }
+        # Support for POST requests with bodies
+        client_max_body_size 100m;
 
-module "asg" {
-  source  = "terraform-aws-modules/autoscaling/aws"
-  version = ">= 6.9.0, < 7.0.0"
+        location / {
+            # Proxy to the appropriate backend
+            proxy_pass \$backend;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade \$http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header X-Real-IP \$remote_addr;
+            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto \$scheme;
+        }
 
-  # Autoscaling group
-  name            = local.name
-  # use_name_prefix = true
-  instance_name   = local.name
+        location /healthz {
+            return 200 'Healthy';
+            add_header Content-Type text/plain;
+        }
+      }
+    }
+    EOF
+    sudo mv /tmp/nginx.conf /etc/nginx/nginx.conf
 
-  min_size                  = 1
-  max_size                  = 3
-  desired_capacity          = 1
-  wait_for_capacity_timeout = 0
-  default_instance_warmup   = 300
-  health_check_type         = "EC2"
+    sudo systemctl enable nginx
+    sudo systemctl restart nginx
+    sudo systemctl status nginx
+    echo "All DONE!"
+  EOT 
+  )
 
-  vpc_zone_identifier       = data.aws_subnet_ids.subnets.ids
-  # service_linked_role_arn   = aws_iam_service_linked_role.autoscaling.arn
+  instance_initiated_shutdown_behavior = "stop"
+  iam_instance_profile_name = data.aws_iam_instance_profile.gateway.name
 
-  # Launch template
-  launch_template_name        ="${local.name}-migration"
-  launch_template_description = "${local.name} LT"
-  update_default_version      = true
+  enable_monitoring           = true
+  associate_public_ip_address = true
+  block_device_mappings = [
+    {
+      # Root volume
+      device_name = "/dev/xvda"
+      no_device   = 0
+      virtual_name =  null
+      ebs = {
+        delete_on_termination = true
+        encrypted             = false
+        volume_size           = 50
+        volume_type           = "gp3"
+        iops                  = 5000
+        kms_key_id            = null
+        snapshot_id           = null
+        throughput            = 250
+      }
+    }
+  ]
 
-  image_id          = data.aws_ami.amazon_linux.id
-  instance_type     = "m5.large"
-  user_data         = base64encode(local.user_data)
-  ebs_optimized     = true
-  enable_monitoring = true
-
-  key_name = "gateway"
+  metadata_options = {
+    http_endpoint               = "enabled"
+    http_tokens                 = "optional"
+    http_put_response_hop_limit = 1
+    http_protocol_ipv6          = "disabled"
+  }
 
   network_interfaces = [
     {
@@ -344,40 +239,6 @@ module "asg" {
       # interface_type              = "Network interface"
     },
   ]
-
-  security_groups          = [aws_security_group.migration.id]
-
-  target_group_arns = module.gateway_load_balancing.target_group_arns                              
-
-  # Target scaling policy schedule based on average CPU load
-  scaling_policies = {
-    avg-cpu-policy-greater-than-50 = {
-      policy_type               = "TargetTrackingScaling"
-      estimated_instance_warmup = 300
-      target_tracking_configuration = {
-        predefined_metric_specification = {
-          predefined_metric_type = "ASGAverageCPUUtilization"
-        }
-        target_value = 50.0
-      }
-    },
-  }
-
-  block_device_mappings = [
-    {
-      # Root volume
-      device_name = "/dev/xvda"
-      no_device   = 0
-      ebs = {
-        delete_on_termination = true
-        encrypted             = true
-        volume_size           = 50
-        volume_type           = "gp2"
-      }
-    }
-  ]
-
-  tags = local.tags
 
   tag_specifications = [
     {
@@ -400,4 +261,57 @@ module "asg" {
     }
   ]
 
+}
+
+module "gateway_autoscaling" {
+  source  = "app.terraform.io/pokt-foundation/gateway/aws//modules/autoscaling"
+  version = "1.0.1"
+
+  name                    = "${local.name}-migration"
+  min_size                = 1
+  max_size                = 3
+  desired_capacity        = 1
+  target_group_arns       = module.gateway_load_balancing.target_group_arns
+  launch_template_id      = module.gateway_launch-template.id
+  launch_template_version = module.gateway_launch-template.latest_version
+  vpc_zone_identifier     = module.gateway.public_subnet_ids
+  service_linked_role_arn = data.aws_iam_role.autoscaling.arn
+  termination_policies    = ["OldestLaunchTemplate", "OldestInstance"]
+  protect_from_scale_in   = false
+
+
+  health_check_type         = "EC2"
+  health_check_grace_period = 150
+  wait_for_capacity_timeout = 0
+
+  default_cooldown          = 150
+
+
+  force_delete   = false
+
+  instance_refresh = {
+    strategy  = "Rolling"
+    triggers  = ["tag"]
+    preferences = {
+      instance_warmup        = 120
+      min_healthy_percentage = 90
+    }
+  }
+  tags_as_map = {
+    Name  = format("%s-migration", local.name)
+  }
+}
+
+resource "aws_autoscaling_policy" "example" {
+  autoscaling_group_name = module.gateway_autoscaling.autoscaling_group_name
+  name                   = "gateway-migration"
+  policy_type            = "TargetTrackingScaling"
+
+  estimated_instance_warmup = 300
+  target_tracking_configuration {
+    target_value = 50.0
+    predefined_metric_specification {
+      predefined_metric_type = "ASGAverageCPUUtilization"
+    }
+  }
 }
