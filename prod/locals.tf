@@ -22,6 +22,90 @@ locals {
 
   support_container_insights = var.support_container_insights
 
+  user_data       = <<-EOT
+    #!/bin/bash
+    set -x
+
+    sudo yum update
+    sudo yum install -y nginx
+
+    cat <<EOF > /tmp/nginx.conf
+    user nginx;
+    worker_processes auto;
+    error_log /var/log/nginx/error.log debug;
+    pid /run/nginx.pid;
+
+    # Load dynamic modules. See /usr/share/doc/nginx/README.dynamic.
+    include /usr/share/nginx/modules/*.conf;
+
+    events {
+        worker_connections 1024;
+    }
+
+    http {
+        log_format  main  '\$remote_addr - \$remote_user [\$time_local] "\$request" '
+                          '\$status \$body_bytes_sent "\$http_referer" '
+                          '"\$http_user_agent" "\$http_x_forwarded_for"';
+
+        access_log  /var/log/nginx/access.log  main;
+
+        sendfile            on;
+        tcp_nopush          on;
+        keepalive_timeout   65;
+        types_hash_max_size 4096;
+
+        include             /etc/nginx/mime.types;
+        default_type        application/octet-stream;
+
+        # Load modular configuration files from the /etc/nginx/conf.d directory.
+        # See http://nginx.org/en/docs/ngx_core_module.html#include
+        # for more information.
+        include /etc/nginx/conf.d/*.conf;
+
+
+    map \$http_host \$backend {
+        default "";
+        ~^(?<subdomain>.+)\.gateway\.pokt\.network\$ https://\$subdomain.middleware.eu-southwest1-prod.v2.pokt.network;
+    }
+
+    resolver 100.100.100.100;
+
+    server {
+        listen 80;
+        server_name *.gateway.pokt.network;
+
+        # Ensure requests are sent with the original host header
+        proxy_set_header Host \$host;
+
+        # Support for POST requests with bodies
+        client_max_body_size 100m;
+
+        location / {
+            # Proxy to the appropriate backend
+            proxy_pass \$backend;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade \$http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header X-Real-IP \$remote_addr;
+            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto \$scheme;
+        }
+
+        location /healthz {
+            return 200 'Healthy';
+            add_header Content-Type text/plain;
+        }
+      }
+    }
+    EOF
+    sudo mv /tmp/nginx.conf /etc/nginx/nginx.conf
+
+    sudo systemctl enable nginx
+    sudo systemctl restart nginx
+    sudo systemctl status nginx
+    echo "All DONE!"
+  EOT
+
   container_definitions = jsonencode([
 		{
 			"dnsSearchDomains": null,
