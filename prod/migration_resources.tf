@@ -287,7 +287,6 @@ module "gateway_autoscaling" {
 
 
   force_delete   = false
-  asg_delete_timeout = "20m"
 
   instance_refresh = {
     strategy  = "Rolling"
@@ -301,84 +300,3 @@ module "gateway_autoscaling" {
     Name  = format("%s-migration", local.name)
   }
 }
-
-
-# ### ASG
-# module "asg" {
-#   source  = "terraform-aws-modules/autoscaling/aws"
-#   version = ">= 6.9.0, < 7.0.0"
-
-
-#   instance_name   = local.name
-
-#   default_instance_warmup   = 300
-
-#   vpc_zone_identifier       = data.aws_subnet_ids.subnets.ids
-#   # service_linked_role_arn   = aws_iam_service_linked_role.autoscaling.arn
-
-#   # Launch template
-#   launch_template_name        = local.name
-#   launch_template_description = "${local.name} LT"
-#   update_default_version      = true
-
-#   image_id          = data.aws_ami.amazon_linux.id
-#   instance_type     = local.instance_type
-#   user_data         = base64encode(local.user_data)
-#   ebs_optimized     = true
-#   enable_monitoring = true
-
-#   key_name = local.key_name
-
-#   network_interfaces = [
-#     {
-#       associate_public_ip_address = true
-#       # security_groups       = [aws_security_group.migration.id]
-#     }
-#   ]
-
-#   security_groups          = [aws_security_group.migration.id]
-
-#   target_group_arns = module.alb.target_group_arns                              
-
-#   # Target scaling policy schedule based on average CPU load
-#   scaling_policies = {
-#     avg-cpu-policy-greater-than-50 = {
-#       policy_type               = "TargetTrackingScaling"
-#       estimated_instance_warmup = 300
-#       target_tracking_configuration = {
-#         predefined_metric_specification = {
-#           predefined_metric_type = "ASGAverageCPUUtilization"
-#         }
-#         target_value = 50.0
-#       }
-#     },
-#   }
-
-#   block_device_mappings = [
-#     {
-#       # Root volume
-#       device_name = "/dev/xvda"
-#       no_device   = 0
-#       ebs = {
-#         delete_on_termination = true
-#         encrypted             = true
-#         volume_size           = 50
-#         volume_type           = "gp2"
-#       }
-#     }
-#   ]
-
-#   tag_specifications = [
-#     {
-#       resource_type = "instance"
-#       tags          = { WhatAmI = "Instance" }
-#     },
-#     {
-#       resource_type = "volume"
-#       tags          = merge({ WhatAmI = "Volume" })
-#     }
-#   ]
-
-#   tags = local.tags
-
-# }
