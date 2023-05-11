@@ -272,8 +272,8 @@ module "gateway_autoscaling" {
   max_size                = 3
   desired_capacity        = 1
   target_group_arns       = module.gateway_load_balancing.target_group_arns
-  launch_template_id      = module.gateway_launch-template.launch_template_id
-  launch_template_version = module.gateway_launch-template.launch_template_latest_version
+  launch_template_id      = module.gateway_launch-template.id
+  launch_template_version = module.gateway_launch-template.latest_version
   vpc_zone_identifier     = module.gateway.public_subnet_ids
   service_linked_role_arn = data.aws_iam_role.autoscaling.arn
   termination_policies    = ["OldestLaunchTemplate", "OldestInstance"]
