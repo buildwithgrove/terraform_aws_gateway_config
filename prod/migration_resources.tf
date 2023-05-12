@@ -1,6 +1,6 @@
 ### Create sec group
 resource "aws_security_group" "migration" {
-  name        = local.name
+  name        = "${local.name}-migration"
   description = "Allow ${local.name} inbound traffic"
   vpc_id      = module.gateway.vpc_id
 
@@ -37,7 +37,7 @@ resource "aws_security_group" "migration" {
   }
 
   tags = {
-    Name = "allow_tls"
+    Name = "${local.name}-migration"
   }
 }
 
@@ -91,7 +91,7 @@ module "gateway_load_balancing" {
       port               = 443
       protocol           = "HTTPS"
       certificate_arn    = module.gateway.ssl_arn[0]
-      ssl_policy         = "ELBSecurityPolicy-2016-08"
+      ssl_policy         = "ELBSecurityPolicy-TLS13-1-2-2021-06"
       action_type        = "forward"
       target_group_index = 0
     }
@@ -107,7 +107,7 @@ module "gateway_launch-template" {
   update_default_version  = true  
   disable_api_termination = false
 
-  image_id        = data.aws_ami.amazon_linux.id
+  image_id        = data.aws_ami.migration_linux.id
   key_name        = "gateway-infra"
   create_key_pair = false
   instance_type   = "m5.large"
