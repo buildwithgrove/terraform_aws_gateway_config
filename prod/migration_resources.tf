@@ -63,7 +63,7 @@ module "gateway_load_balancing" {
   target_groups = [
       {
         name                 = format("%s-migration", local.name)
-        port                 = 3000
+        port                 = 80
         protocol             = "HTTP"
         protocol_version     = "HTTP1"
         target_type          = "instance"
