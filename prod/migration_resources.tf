@@ -73,7 +73,7 @@ module "gateway_load_balancing" {
         health_check = {
           enabled             = true
           interval            = 30
-          path                = "/"
+          path                = "/healthz"
           port                = "traffic-port"
           healthy_threshold   = 5
           unhealthy_threshold = 2
