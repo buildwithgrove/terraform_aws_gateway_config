@@ -46,6 +46,7 @@ module "gateway_load_balancing" {
   version = "1.0.1"
   
   name                       = "${local.name}-migration"
+  vpc_id                     = module.gateway.vpc_id
   load_balancer_type         = "application"
   internal                   = false
   security_groups            = [aws_security_group.migration.id]
@@ -194,7 +195,7 @@ module "gateway_autoscaling" {
   service_linked_role_arn = data.aws_iam_role.autoscaling.arn
   termination_policies    = ["OldestLaunchTemplate", "OldestInstance"]
   protect_from_scale_in   = false
-  auto_scaling_group_arn = module.gateway.autoscaling_group_arn
+  auto_scaling_group_arn = module.gateway_load_balancing.arn[0]
 
 
   health_check_type         = "EC2"
