@@ -195,7 +195,7 @@ module "gateway_autoscaling" {
   service_linked_role_arn = data.aws_iam_role.autoscaling.arn
   termination_policies    = ["OldestLaunchTemplate", "OldestInstance"]
   protect_from_scale_in   = false
-  auto_scaling_group_arn = module.gateway_load_balancing.arn[0]
+  auto_scaling_group_arn = module.gateway_autoscaling.arn[0]
 
 
   health_check_type         = "EC2"
