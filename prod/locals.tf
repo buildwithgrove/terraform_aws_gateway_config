@@ -39,7 +39,7 @@ locals {
     include /usr/share/nginx/modules/*.conf;
 
     events {
-        worker_connections 1024;
+        worker_connections 8192;
     }
 
     http {
