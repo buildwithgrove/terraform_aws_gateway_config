@@ -26,10 +26,9 @@ locals {
     #!/bin/bash
     set -x
 
-    cat <<EOF > /tmp/01-file-max.conf
+    sudo cat <<EOF >> /etc/sysctl.d/99-sysctl.conf
     fs.file-max = 262144
     EOF
-    sudo mv /tmp/01-sfile-max.conf /etc/sysctl.d
     sudo sysctl -p
 
     sudo yum update
