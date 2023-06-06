@@ -5,27 +5,27 @@ resource "aws_security_group" "migration" {
   vpc_id      = module.gateway.vpc_id
 
   ingress {
-    description      = local.name
-    from_port        = 443
-    to_port          = 443
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
+    description = local.name
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
     # ipv6_cidr_blocks = 
   }
   ingress {
-    description      = local.name
-    from_port        = 80
-    to_port          = 80
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
+    description = local.name
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
     # ipv6_cidr_blocks = 
   }
   ingress {
-    description      = local.name
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
+    description = local.name
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
     # ipv6_cidr_blocks = 
   }
   egress {
@@ -44,7 +44,7 @@ resource "aws_security_group" "migration" {
 module "gateway_load_balancing" {
   source  = "app.terraform.io/pokt-foundation/gateway/aws//modules/load_balancing"
   version = "1.0.1"
-  
+
   name                       = "${local.name}-migration"
   vpc_id                     = module.gateway.vpc_id
   load_balancer_type         = "application"
@@ -61,27 +61,27 @@ module "gateway_load_balancing" {
   load_balancer_delete_timeout = "10m"
 
   target_groups = [
-      {
-        name                 = format("%s-migration", local.name)
-        port                 = 80
-        protocol             = "HTTP"
-        protocol_version     = "HTTP1"
-        target_type          = "instance"
-        deregistration_delay           = 120
-        load_balancing_algorithm_type  = "least_outstanding_requests"
+    {
+      name                          = format("%s-migration", local.name)
+      port                          = 80
+      protocol                      = "HTTP"
+      protocol_version              = "HTTP1"
+      target_type                   = "instance"
+      deregistration_delay          = 120
+      load_balancing_algorithm_type = "least_outstanding_requests"
 
-        health_check = {
-          enabled             = true
-          interval            = 30
-          path                = "/healthz"
-          port                = "traffic-port"
-          healthy_threshold   = 5
-          unhealthy_threshold = 2
-          timeout             = 5
-          protocol            = "HTTP"
-          matcher             = "200"
-        }
+      health_check = {
+        enabled             = true
+        interval            = 30
+        path                = "/healthz"
+        port                = "traffic-port"
+        healthy_threshold   = 5
+        unhealthy_threshold = 2
+        timeout             = 5
+        protocol            = "HTTP"
+        matcher             = "200"
       }
+    }
   ]
 
   https_listeners = [
@@ -104,7 +104,7 @@ module "gateway_launch-template" {
 
   name                    = "${local.name}-migration"
   description             = "gateway migration ec2 launch template"
-  update_default_version  = true  
+  update_default_version  = true
   disable_api_termination = false
 
   image_id        = data.aws_ami.migration_linux.id
@@ -116,16 +116,16 @@ module "gateway_launch-template" {
   user_data_base64 = base64encode(local.user_data)
 
   instance_initiated_shutdown_behavior = "stop"
-  iam_instance_profile_name = data.aws_iam_instance_profile.gateway.name
+  iam_instance_profile_name            = data.aws_iam_instance_profile.gateway.name
 
   enable_monitoring           = true
   associate_public_ip_address = true
   block_device_mappings = [
     {
       # Root volume
-      device_name = "/dev/xvda"
-      no_device   = 0
-      virtual_name =  null
+      device_name  = "/dev/xvda"
+      no_device    = 0
+      virtual_name = null
       ebs = {
         delete_on_termination = true
         encrypted             = false
@@ -160,7 +160,7 @@ module "gateway_launch-template" {
   tag_specifications = [
     {
       resource_type = "instance"
-      tags          = merge(
+      tags = merge(
         {
           Name = "${local.name}-migration"
         },
@@ -169,7 +169,7 @@ module "gateway_launch-template" {
     },
     {
       resource_type = "volume"
-      tags          = merge(
+      tags = merge(
         {
           Name = "${local.name}-migration"
         },
@@ -185,9 +185,9 @@ module "gateway_autoscaling" {
   version = "1.0.1"
 
   name                    = "${local.name}-migration"
-  min_size                = 1
-  max_size                = 3
-  desired_capacity        = 1
+  min_size                = 3
+  max_size                = 6
+  desired_capacity        = 3
   target_group_arns       = module.gateway_load_balancing.target_group_arns
   launch_template_id      = module.gateway_launch-template.id
   launch_template_version = module.gateway_launch-template.latest_version
@@ -195,28 +195,28 @@ module "gateway_autoscaling" {
   service_linked_role_arn = data.aws_iam_role.autoscaling.arn
   termination_policies    = ["OldestLaunchTemplate", "OldestInstance"]
   protect_from_scale_in   = false
-  auto_scaling_group_arn = module.gateway_autoscaling.autoscaling_group_arn
+  auto_scaling_group_arn  = module.gateway_autoscaling.autoscaling_group_arn
 
 
   health_check_type         = "EC2"
   health_check_grace_period = 150
   wait_for_capacity_timeout = 0
 
-  default_cooldown          = 150
+  default_cooldown = 150
 
 
-  force_delete   = false
+  force_delete = false
 
   instance_refresh = {
-    strategy  = "Rolling"
-    triggers  = ["tag"]
+    strategy = "Rolling"
+    triggers = ["tag"]
     preferences = {
       instance_warmup        = 120
       min_healthy_percentage = 90
     }
   }
   tags_as_map = {
-    Name  = format("%s-migration", local.name)
+    Name = format("%s-migration", local.name)
   }
 }
 

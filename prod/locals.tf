@@ -26,6 +26,12 @@ locals {
     #!/bin/bash
     set -x
 
+    cat <<EOF > /tmp/01-file-max.conf
+    fs.file-max = 262144
+    EOF
+    sudo mv /tmp/01-sfile-max.conf /etc/sysctl.d
+    sudo sysctl -p
+
     sudo yum update
     sudo yum install -y nginx
 
