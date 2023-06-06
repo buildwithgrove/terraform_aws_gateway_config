@@ -26,6 +26,11 @@ locals {
     #!/bin/bash
     set -x
 
+    sudo cat <<EOF >> /etc/sysctl.d/99-sysctl.conf
+    fs.file-max = 262144
+    EOF
+    sudo sysctl -p
+
     sudo yum update
     sudo yum install -y nginx
 
