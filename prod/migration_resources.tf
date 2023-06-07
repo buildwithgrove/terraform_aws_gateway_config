@@ -186,7 +186,7 @@ module "gateway_autoscaling" {
 
   name                    = "${local.name}-migration"
   min_size                = 3
-  max_size                = 6
+  max_size                = 12
   desired_capacity        = 3
   target_group_arns       = module.gateway_load_balancing.target_group_arns
   launch_template_id      = module.gateway_launch-template.id
