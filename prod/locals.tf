@@ -69,7 +69,7 @@ locals {
 
 
     map \$http_host \$backend {
-        ~^(?<subdomain>.+)\.gateway\.pokt\.network\$ https://\$subdomain.middleware.${var.gcp_region}-prod.v2.pokt.network;
+        ~^(?<subdomain>.+)\.gateway\.pokt\.network\$ https://\$subdomain.middleware.${var.gcp_region}.portal-prd.v2.pokt.network;
     }
 
     resolver 8.8.8.8;
