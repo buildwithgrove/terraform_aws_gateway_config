@@ -94,7 +94,7 @@ locals {
 }
 
 ### Create sec group
-resource "aws_security_group" "migration" {
+resource "aws_security_group" "mci-migration" {
   name        = "${local.name}-mci"
   description = "Allow ${local.name} inbound traffic"
   vpc_id      = module.gateway.vpc_id
@@ -136,7 +136,7 @@ resource "aws_security_group" "migration" {
   }
 }
 
-module "gateway_load_balancing" {
+module "mci_gateway_load_balancing" {
   source  = "app.terraform.io/pokt-foundation/gateway/aws//modules/load_balancing"
   version = "1.0.1"
 
@@ -193,7 +193,7 @@ module "gateway_load_balancing" {
   ]
 }
 
-module "gateway_launch-template" {
+module "mci_gateway_launch-template" {
   source  = "app.terraform.io/pokt-foundation/gateway/aws//modules/launch-template"
   version = "1.0.1"
 
@@ -275,7 +275,7 @@ module "gateway_launch-template" {
 
 }
 
-module "gateway_autoscaling" {
+module "mci_gateway_autoscaling" {
   source  = "app.terraform.io/pokt-foundation/gateway/aws//modules/autoscaling"
   version = "1.0.1"
 
@@ -315,7 +315,7 @@ module "gateway_autoscaling" {
   }
 }
 
-resource "aws_autoscaling_policy" "avg-cpu-policy-greater-than-50" {
+resource "aws_autoscaling_policy" "mci-avg-cpu-policy-greater-than-50" {
   autoscaling_group_name = module.gateway_autoscaling.autoscaling_group_name
   name                   = "gateway-mci"
   policy_type            = "TargetTrackingScaling"
